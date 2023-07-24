@@ -3,6 +3,7 @@ package com.example.tiptime
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -50,9 +51,12 @@ class MainActivity : ComponentActivity() {
 fun TipTimeLayout() {
 
     var amountInput by remember { mutableStateOf("") }
-
     val amount = amountInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount)
+
+    var tipInput by remember { mutableStateOf("") }
+    val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
+
+    val tip = calculateTip(amount, tipPercent)
 
     Column (
         modifier = Modifier.padding(40.dp),
@@ -67,9 +71,20 @@ fun TipTimeLayout() {
         )
 
         EditNumberField(
+            label = R.string.bill_amount,
             value = amountInput,
             onValueChange = {amountInput = it},
-            modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth())
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .fillMaxWidth())
+
+        EditNumberField(
+            label = R.string.how_was_the_services,
+            value = tipInput,
+            onValueChange = { tipInput = it },
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .fillMaxWidth())
         
         Text(
             text = stringResource(id = R.string.tip_amount, tip),
@@ -82,6 +97,7 @@ fun TipTimeLayout() {
 
 @Composable
 fun EditNumberField(
+    @StringRes label: Int,
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -91,7 +107,7 @@ fun EditNumberField(
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
-        label = { Text(stringResource(id = R.string.bill_amount)) },
+        label = { Text(stringResource(label)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = modifier
     )
